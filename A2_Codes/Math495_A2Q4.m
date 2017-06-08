@@ -2,7 +2,7 @@
 % on circle of radius R
 %% Computational parameters    
 Nx = 100;     Ny = 100;        % Grid size
-Ntime = 1e2;  plotgap = 1;    % Number of time steps
+Ntime = 1e2;  plotgap = 01;    % Number of time steps
 %% Physical parameters         
 nu = 1;  R = 1;                % Diffusivity and Raius
 Lx = 2;  Ly = 2;               % Domain size
@@ -18,7 +18,7 @@ XX = X(:);  YY = Y(:);
 [cpx, cpy] = pol2cart(th, R);
 cpxvec = cpx(:);   cpyvec = cpy(:); 
 %% Initial Condition           
-IC = @(x) exp(-2*x.^2);  % sin(4*x);
+IC = @(x) sin(x); % exp(-2*x.^2)
 %% Operators                   
 Ix = speye(Nx);  Iy = speye(Ny); I = kron(Ix, Iy);
 Dxx = (circshift(Ix, [1, 0]) - 2*Ix + circshift(Ix, [-1, 0]))/(dx^2);
@@ -29,8 +29,9 @@ u = IC(th(:));     figure(1)
 lims = [-1.5*R 1.5*R -1.5*R 1.5*R min(u)-0.5 max(u)+0.2];
 s = scatter3(cpxvec, cpyvec, u, 50, u, 'filled'); hold on
 [~, h] = contourf(x, y, IC(atan2(Y, X)), 20, 'linecolor', 'none');
-colorbar, axis square, axis(lims), axis square, view([-45 30]), hold off
-h.ContourZLevel = lims(5);     title('Time = 0', 'FontSize', 20);
+colorbar, axis(lims), axis square, view([-45 30]), hold off
+h.ContourZLevel = lims(5);     
+title('Time = 0', 'FontSize', 20);
 %% Time Integration            
 tic
 for t = 1:Ntime         
@@ -40,8 +41,15 @@ for t = 1:Ntime
     if mod(t, plotgap) == 0             % Plotting
         s.ZData = u;  s.CData = u;  
         h.ZData = reshape(u, Nx, Ny);
+        %s.ZData = reshape(u, Nx, Ny);
         title(['Time = ', num2str(t*dt)])
         drawnow
+        print('-bestfit', sprintf('../../Assignments/Assignment2/HeatCircle_T%2.2f.',...
+           t*dt), '-dpdf')
     end
 end
 fprintf('Time integration took %2.1f seconds \n', toc)
+
+
+
+

@@ -34,7 +34,7 @@ print('-bestfit', '../../Assignments/Assignment2/HeatCircleConv1', '-dpdf')
 %% Temporal Convergence Study     
 % for heat equation on a circle of radius R
 %% Parameters                     
-R = 1;    N = 9;           % Radius and number of trials
+R = 1;    N = 6;           % Radius and number of trials
 M = 100;  dx = 3*R/M;      % Spatial parameters
 x = dx-3*R/2:dx:3*R/2;
 Tfinal = 1;                % Length of the simulations
@@ -51,15 +51,17 @@ I = speye(M);  II = speye(M^2);
 D = (circshift(I, [1, 0]) - 2*I + circshift(I, [-1, 0]))/(dx^2);        
 Lap = nu*(kron(I, D) + kron(D, I));   
 %% Iterations                     
+tic
 parfor j = 1:N
-    dt = Tfinal/Tsteps(j);  [Low, Up] = lu(II - dt*Lap); u = u0;
+    dt = Tfinal/(Tsteps(j));  [Low, Up] = lu(II - dt*Lap); u = u0;
     for t = 1:Tsteps(j)  
         u = Up\(Low\u);             % Time step on the embedding grid   
-        u = interp2(X, Y, reshape(u, M, M), cpx, cpy, 'cubic');   % Interpolation to the circle
+        u = interp2(X, Y, reshape(u, M, M), cpx, cpy, methods{q});   % Interpolation to the circle
         u = u(:); 
     end
     errors(j) = norm(u - u_true, inf);
 end
+toc
 %% Convergence Rate               
 p = polyfit(log(Tsteps), log(errors), 1);  % Fitting a linear model into 
 rate = -p(1);                             % logarithmically scaled data
@@ -69,4 +71,4 @@ loglog(Tsteps, exp( polyval(p, log(Tsteps))), 'linewidth', 2);
 hold on, loglog(Tsteps, errors, '.', 'markersize', 20); hold off
 title(['Temporal convergence rate is ', num2str(rate, 3)], 'fontsize', 16)
 legend({'Linear model', 'Errors'}, 'fontsize', 16)                        
-print('-bestfit', '../../Assignments/Assignment2/HeatCircleConv2', '-dpdf')
+print('-bestfit', '../../Assignments/Assignment2/HeatCircleConv2', '-dpdf') 
