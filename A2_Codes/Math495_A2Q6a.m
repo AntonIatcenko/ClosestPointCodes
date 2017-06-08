@@ -1,23 +1,23 @@
 %% Gray-Scott Equation         
 % on a rectangle [-L, L] x [-L L]
 %% Computational parameters    
-Nx = 200;     Ny = 200;        % Grid size
-Ntime = 5e4;  plotgap = 50;    % Number of time steps
-Lx = 1;  Ly = 1;               % Domain size
+Nx = 100;     Ny = 100;        % Grid size
+Ntime = 1e4;  plotgap = 10;    % Number of time steps
+Lx = 2;  Ly = 2;               % Domain size
 Tfinal = 500;                  % Length of the simulation
 dx = 2*Lx/Nx; dy = 2*Ly/Ny;    % Spatial resolutions
 dt = Tfinal/Ntime;             % Temporal resolution
 %% Physical parameters         
-eps1 = 2e-5;      eps2 = 1e-5; 
-F = 0.042;         k = 0.061;
+eps1 = 1/900;      eps2 = 1/2700; 
+F = 0.054;         k = 0.063;
 %% Grids                       
 x = dx-Lx:dx:Lx;
 y = dy-Ly:dy:Ly;
 [X, Y] = meshgrid(x, y);      
 XX = X(:);  YY = Y(:); 
 %% Initial Condition           
-u = exp(sin(XX).*cos(YY)); 
-v = sin(YY) + cos(XX); 
+u = besselj(1, (XX.^2 + YY.^2)/10).*sin(2*atan2(YY, XX) );
+v = besselj(0, (XX.^2 + YY.^2)/10).*cos(4*atan2(YY, XX) );
 %% Operators                   
 Ix = speye(Nx);        Iy = speye(Ny);       I = kron(Ix, Iy);
 Dxx = (circshift(Ix, [1, 0]) - 2*Ix + circshift(Ix, [-1, 0]))/(dx^2);
@@ -30,10 +30,12 @@ s1 = subplot(1, 2, 1);
 %[~, h1] = contourf(x, y, reshape(u, Nx, Ny), 20, 'linecolor', 'none');
 h1 = surf(x, y, reshape(u, Nx, Ny), 'edgecolor', 'none'); view([0 90])
 colorbar, title('u at time 0', 'Fontsize', 14), axis([dx-Lx Lx dy-Ly Ly])
+axis square
 s2 = subplot(1, 2, 2);
 %[~, h2] = contourf(x, y, reshape(v, Nx, Ny), 20, 'linecolor', 'none');
 h2 = surf(x, y, reshape(v, Nx, Ny), 'edgecolor', 'none'); view([0 90])
 colorbar, title('v at time 0', 'Fontsize', 14), axis([dx-Lx Lx dy-Ly Ly])
+axis square
 %% Time Integration            
 vidObj = VideoWriter(sprintf('Gray_Scott_Equation_F%1.4f_k%1.4f_.avi',...
     F, k));                               % Creating video file
@@ -50,5 +52,5 @@ for t = 1:Ntime
         title(s2, sprintf('v at time %3.1f', t*dt))
         drawnow, writeVideo(vidObj, getframe(fig1));
     end
-end
-fprintf('Time integration took %2.1f seconds \n', toc), close(vidObj);
+end, close(vidObj)
+fprintf('Time integration took %2.1f seconds \n', toc)
