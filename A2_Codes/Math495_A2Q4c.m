@@ -24,15 +24,15 @@ end
 p = polyfit(log(grids), log(errors), 1);  % Fitting a linear model into 
 rate = -p(1);                             % logarithmically scaled data
 %% Plotting                       
-figure(1), subplot(1, 2, 1)
+figure(1)
 loglog(grids, exp( polyval(p, log(grids))), 'linewidth', 2);
 hold on, loglog(grids, errors, '.', 'markersize', 20); hold off
 title(['Spatial convergence rate is ', num2str(rate, 3)], 'fontsize', 16)
 legend({'Linear model', 'Errors'}, 'fontsize', 16)
+print('-bestfit', '../../Assignments/Assignment2/HeatCircleConv1', '-dpdf')
 %%
 %% Temporal Convergence Study     
-% for Laplace-Beltramy on a circle of radius R:
-% Lap*u = f
+% for heat equation on a circle of radius R
 %% Parameters                     
 R = 1;    N = 9;           % Radius and number of trials
 M = 100;  dx = 3*R/M;      % Spatial parameters
@@ -51,7 +51,6 @@ I = speye(M);  II = speye(M^2);
 D = (circshift(I, [1, 0]) - 2*I + circshift(I, [-1, 0]))/(dx^2);        
 Lap = nu*(kron(I, D) + kron(D, I));   
 %% Iterations                     
-tic
 parfor j = 1:N
     dt = Tfinal/Tsteps(j);  [Low, Up] = lu(II - dt*Lap); u = u0;
     for t = 1:Tsteps(j)  
@@ -60,13 +59,14 @@ parfor j = 1:N
         u = u(:); 
     end
     errors(j) = norm(u - u_true, inf);
-end, toc
+end
 %% Convergence Rate               
 p = polyfit(log(Tsteps), log(errors), 1);  % Fitting a linear model into 
 rate = -p(1);                             % logarithmically scaled data
 %% Plotting                       
-figure(1), subplot(1, 2, 2)
+figure(2)
 loglog(Tsteps, exp( polyval(p, log(Tsteps))), 'linewidth', 2);
 hold on, loglog(Tsteps, errors, '.', 'markersize', 20); hold off
 title(['Temporal convergence rate is ', num2str(rate, 3)], 'fontsize', 16)
-legend({'Linear model', 'Errors'}, 'fontsize', 16)
+legend({'Linear model', 'Errors'}, 'fontsize', 16)                        
+print('-bestfit', '../../Assignments/Assignment2/HeatCircleConv2', '-dpdf')
