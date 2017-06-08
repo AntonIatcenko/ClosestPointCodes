@@ -25,7 +25,7 @@ Dxx = (circshift(Ix, [1, 0]) - 2*Ix + circshift(Ix, [-1, 0]))/(dx^2);
 Dyy = (circshift(Iy, [1, 0]) - 2*Iy + circshift(Iy, [-1, 0]))/(dy^2);  
 Lap = nu*(kron(Ix, Dyy) + kron(Dxx, Iy)); [Low, Up] = lu(I - dt*Lap);
 %% Initial Plot                
-u = IC(th(:));     fig1 = figure(1);
+u = IC(th(:));     figure(1)
 lims = [-1.5*R 1.5*R -1.5*R 1.5*R min(u)-0.5 max(u)+0.2];
 s = scatter3(cpxvec, cpyvec, u, 50, u, 'filled'); hold on
 [~, h] = contourf(x, y, IC(atan2(Y, X)), 20, 'linecolor', 'none');
@@ -36,7 +36,6 @@ tic
 for t = 1:Ntime         
     u = Up\(Low\u);             % Time step on the embedding grid   
     u = interp2(X, Y, reshape(u, Nx, Ny), cpx, cpy, 'cubic');   % Interpolation to the circle
-    %u = ba_interp2(X, Y, reshape(u, Nx, Ny), cpx, cpy, 'cubic');
     u = u(:);
     if mod(t, plotgap) == 0             % Plotting
         s.ZData = u;  s.CData = u;  

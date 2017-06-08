@@ -2,9 +2,9 @@
 % on a rectangle [-L, L] x [-L L]
 %% Computational parameters    
 Nx = 200;     Ny = 200;        % Grid size
-Ntime = 5e4;  plotgap = 50;    % Number of time steps
+Ntime = 1e4;  plotgap = 10;    % Number of time steps
 Lx = 1;  Ly = 1;               % Domain size
-Tfinal = 500;                  % Length of the simulation
+Tfinal = 100;                  % Length of the simulation
 dx = 2*Lx/Nx; dy = 2*Ly/Ny;    % Spatial resolutions
 dt = Tfinal/Ntime;             % Temporal resolution
 %% Physical parameters         
