@@ -13,4 +13,4 @@ for j = 1:numpoints
     point(2, :) = cp_circle(point(1, :), R);
     figure(1), plot(point(:, 1), point(:, 2), '-*', 'linewidth', 2)
 end, hold off
-function cpV = cp_circle(V, R), cpV = R/norm(V, 2)*V; end    
+%function cpV = cp_circle(V, R), cpV = R/norm(V, 2)*V; end    
