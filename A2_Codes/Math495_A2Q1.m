@@ -6,7 +6,7 @@ point = zeros(2, 2);
 figure(1)
 plot(Cx, Cy, 'linewidth', 2), hold on
 axis([-R*3/2 R*3/2 -R*3/2 R*3/2]); axis square
-title(['Closest points on the circle with radius ', num2str(R, 1)],...
+title(['Closest points for the circle with radius ', num2str(R, 1)],...
     'Fontsize', 14)
 for j = 1:numpoints
     point(1, :) = 3*R*rand([2 1]) - 3*R/2;
