@@ -16,7 +16,7 @@ for j = 1:N
     I = speye(grids(j));
     D = (circshift(I, [1, 0]) - 2*I + circshift(I, [-1, 0]))/(dx^2);  % 2nd derivative matrix
     LapU = D*u + u*D;               % Derivative on the grid
-    f = interp2(X, Y, LapU, cpx, cpy, 'cubic');
+    f = interp2(X, Y, LapU, cpx, cpy, 'linear');
     errors(j) = norm(f(:) + 2^2*u(:), inf);
     %fprintf('N = %03i, error = %2.4f \n', grids(j), supError)
 end
