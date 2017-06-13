@@ -1,8 +1,8 @@
 %% Advection equation on a circle     
 % convergence study
 %% Parameters                         
-M = 05;    Tfinal = 1;          % Number of trials
-grids = 2.^(6:M+5);             % Spatial grids of different sizes
+M = 9;    Tfinal = 1;           % Number of trials
+grids = 2.^(4:M+3);             % Spatial grids of different sizes
 errors = zeros(1, M);           % Preallocating for errors
 uex = @(th,t) (cos(th-t)).^3;   % Analytic solution
 %
@@ -17,10 +17,12 @@ w1 = -sin(th);   w2 = cos(th);
 E = interp2_matrix(x1d, x1d, cpx, cpy, p, band);
 L = laplacian_2d_matrix(x1d, x1d, 2, band);
 [Dxb, Dxf, Dyb, Dyf] = firstderiv_upw1_2d_matrices(x1d, x1d, band);
+[Dxc, Dyc] = firstderiv_cen2_2d_matrices(x1d, x1d, band);
 dt = 0.25*dx;  numsteps = ceil(Tfinal/dt);  dt = Tfinal / numsteps;
     for kt = 1:numsteps
         rhs = -( (w1 < 0) .* (Dxf*(u.*w1)) + (w1 >= 0) .* (Dxb*(u.*w1)) + ...
            (w2 < 0) .* (Dyf*(u.*w2)) + (w2 >= 0) .* (Dyb*(u.*w2)) );
+         %rhs = -( Dxc*(u.*w1) + Dyc*(u.*w2) );
           unew = u + dt*rhs;  u = E*unew;
     end
     errors(j) = norm(u - uex(th, Tfinal), inf);
@@ -30,6 +32,16 @@ p = polyfit(log(grids), log(errors), 1);
 figure(1)
 loglog(grids, exp( polyval(p, log(grids))), 'linewidth', 2) 
 hold on
-loglog(grids, errors, '.', 'markersize', 20)
-title(sprintf('Convergence rate is %1.2f', -p(1)), 'fontsize', 20)
+loglog(grids, errors, 'r.', 'markersize', 20)%, hold off
+title(sprintf('Convergence rate with upwinding is %1.2f', -p(1)), 'fontsize', 20)
+%title('Errors with centered differences, no convergence', 'fontsize', 20)
 legend({'Best fit linear model', 'Errors'}, 'fontsize', 16)
+
+xlabel('Number of time steps', 'fontsize', 16)
+ylabel('Error', 'fontsize', 16)
+
+
+
+
+
+

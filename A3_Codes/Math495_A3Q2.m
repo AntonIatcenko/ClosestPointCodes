@@ -70,12 +70,13 @@ E = interp2_matrix(x1d, y1d, cpx, cpy, p, band);
 
 L = laplacian_2d_matrix(x1d, y1d, 2, band);
 [Dxb, Dxf, Dyb, Dyf] = firstderiv_upw1_2d_matrices(x1d, y1d, band);
+[Dxc, Dyc] = firstderiv_cen2_2d_matrices(x1d, y1d, band);
 %
 %
 %% Construct an interpolation matrix for plotting     
 % plotting grid on circle, using theta as a parameterization
 
-thetas = linspace(0, 2*pi, 32)';
+thetas = linspace(-pi, pi, 32)';
 r = ones(size(thetas));
 % plotting grid in Cartesian coords
 [xp,yp] = pol2cart(thetas,r);
@@ -84,21 +85,22 @@ Eplot = interp2_matrix(x1d, y1d, xp, yp, p, band);
 %
 %
 %% Time-stepping parameters                           
-Tf = 2;
+Tf = pi;
 dt = 0.25*dx;
 numsteps = ceil(Tf/dt);
 % adjust for integer number of steps
 dt = Tf / numsteps;
-plotgap = 10;
+plotgap = 1;
 %% Initial plot                                       
 circplot = Eplot*u0;
 exactplot = uex(thetas, 0);
 fig1 = figure(1); clf(1);      ax = gca;
 plnum = plot(thetas, circplot, '.', 'MarkerSize', 30); hold on
 plexact = plot(thetas, exactplot, 'LineWidth', 2);  hold off
+ylim([-2 2]);
 title('Solution at time 0', 'fontsize', 20);
 xlabel('\theta', 'fontsize', 20) 
-ylabel('u', 'fontsize', 20), xlim([0 2*pi])
+ylabel('u', 'fontsize', 20), xlim([-pi pi])
 legend({'explicit Euler', 'exact answer'},...
     'fontsize', 16, 'Location', 'NorthEast');
 set(get(gca,'ylabel'),'rotation',0)
@@ -114,6 +116,9 @@ for kt = 1:numsteps
   % upwinding discretization of u_t + div_S . (u*vec{w}) = 0
   rhs = -( (w1 < 0) .* (Dxf*(u.*w1)) + (w1 >= 0) .* (Dxb*(u.*w1)) + ...
            (w2 < 0) .* (Dyf*(u.*w2)) + (w2 >= 0) .* (Dyb*(u.*w2)) );
+  %rhs = -( Dxf*(u.*w1) + Dyf*(u.*w2) );
+  %rhs = -( Dxb*(u.*w1) + Dyb*(u.*w2) );
+  %rhs = -( Dxc*(u.*w1) + Dyc*(u.*w2) );
   % explicit Euler timestepping
   unew = u + dt*rhs;
 
@@ -133,8 +138,27 @@ for kt = 1:numsteps
     circplot = Eplot*u;
     exactplot = uex(thetas, t);
     refreshdata([plnum plexact])
-    title(['Solution at time ' num2str(t) ' on circle']);
+    title(['Solution at time ' num2str(t, 2) ' on circle']);
     drawnow
     error_circ_inf = max(abs( exactplot - circplot ));
   end
 end
+
+
+
+%
+%% Vector Fields Plot                                 
+% fd_field1 = ones(size(w1));
+% fd_field2 = ones(size(w2));
+% 
+% figure(2)
+% quiver(x(1:10:end), y(1:10:end), w1(1:10:end), w2(1:10:end)), hold on
+% quiver(x(1:10:end), y(1:10:end), fd_field1(1:10:end), fd_field2(1:10:end))
+
+
+
+
+
+
+
+
