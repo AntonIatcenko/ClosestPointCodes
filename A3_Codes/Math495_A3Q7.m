@@ -2,11 +2,11 @@
 %
 %
 %% Computational Parameters              
-Nspace = 50;      % Number of grid points in one direction
+Nspace = 20;      % Number of grid points in one direction
 Ntime = 1e3;      % Number of time steps
 plotgap = 1e1;    % Number of time steps between plot 
 Nplot = 128;      % Plot resolution
-intOrd = 2;       % Interpolation order
+intOrd = 3;       % Interpolation order
 opOrd = 2;        % Order of the spatial operator
 bw = rm_bandwidth(3, intOrd);     % Bandwidth
 %% Physical Parameters                   
@@ -26,10 +26,11 @@ band = find(abs(d - R)<=bw*dx);                    % Constructing narrow band
 IntMat  = interp3_matrix(x, x, x, Xc, Yc, Zc, intOrd, band);
 Lap     = nu*laplacian_3d_matrix(x, x, x, opOrd, band);
 IntPlot = interp3_matrix(x, x, x, xpl(:), ypl(:), zpl(:), intOrd, band);
-%% Initial Condition and Plot            
+%% Initial Condition                     
 football = spherefun.sphharm(6,0) + sqrt(14/11)*spherefun.sphharm(6,5);
 u0 = football(Xc, Yc, Zc);  
 uTrue = exp(-42*nu*Tfinal)*u0;     % Borrowed from http://bit.ly/2sdlXlM
+%% Initial Plot                          
 u0plot = IntPlot*u0;
 
 fig1 = figure(1);

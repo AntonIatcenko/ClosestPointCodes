@@ -24,15 +24,14 @@ end
 
 %%
 figure(1)
-subplot(1, 2, 1)
 plot(G, sizes', 'linewidth', 3), xlim([G(1) G(end)])
-title('Comparing numbers of unknows', 'fontsize', 16)
+title('Number of unknows', 'fontsize', 16)
 legend({'Full grid', 'Interpolation order 2', ...
     'Interpolation order 3', 'Interpolation order 4'},...
     'location', 'northwest', 'fontsize', 14) 
-subplot(1, 2, 2)
+figure(2)
 loglog(G, sizes', 'linewidth', 3), xlim([G(1) G(end)])
-title('Same on log scale', 'fontsize', 16)
+title('Number of unknows on log scale', 'fontsize', 16)
 legend({'Full grid', 'Interpolation order 2', ...
     'Interpolation order 3', 'Interpolation order 4'},...
     'location', 'northwest', 'fontsize', 14) 
