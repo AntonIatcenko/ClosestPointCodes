@@ -2,7 +2,7 @@
 %
 %
 %% Computational Parameters                
-Ns = 2.^(5:7);                 % Number of grid points in one direction
+Ns = 2.^(5:5);                 % Number of grid points in one direction
 intOrd = 3;                    % Interpolation order
 opOrd = 2;                     % Order of the spatial operator
 numIter = length(Ns);          % Total number of trials  
@@ -16,8 +16,10 @@ bw = rm_bandwidth(3, intOrd);     % Bandwidth
 football = spherefun.sphharm(6,0) + sqrt(14/11)*spherefun.sphharm(6,5); 
 uTrueMult = exp(-42*nu*Tfinal);
 %% Iterations
-parfor j = 1:numIter  
+for j = 1:numIter  
+    fprintf('Iteration%2.0f out of%2.0f...\n', j, numIter)
     dx = 4*R/Ns(j);         % Spatial resolution
+    tspan = [0 Tfinal];
     dt = dx^2/6;            % Time step size
     Nt = ceil(Tfinal/dt);
     dt = Tfinal/Nt;         % Same for all methods
@@ -30,18 +32,99 @@ parfor j = 1:numIter
     % Operators
     Ext     = interp3_matrix(x, x, x, Xc, Yc, Zc, intOrd, band);     % Extension operator
     Lap     = nu*laplacian_3d_matrix(x, x, x, opOrd, band);
+    M       = Ext*Lap - gam*speye(length(Xc)) + gam*Ext;
+    % Initial Condition
+    u0 = football(Xc, Yc, Zc); uTrue = u0*uTrueMult;
+    
     % Forward Euler             
-    u0 = football(Xc, Yc, Zc);  u = u0;
-    M = Ext*Lap - gam*speye(length(Xc)) + gam*Ext;
-    A = speye(length(Xc)) + dt*M;
+    u = u0;
     tic
+    A = speye(length(Xc)) + dt*M;
     for t = 1:Nt, u = A*u; end
     times(1, j) = toc;   
-    errors(1, j) = norm(u - u0*uTrueMult, inf);
+    errors(1, j) = norm(u - uTrue, inf);
+    fprintf('        ...forward Euler is done after       %4.2f second.\n', times(1, j))
+    
+    % Backward Euler             
+    u = u0;
+    tic
+    A = speye(length(Xc)) - dt*M;
+    [LL, UU, PP, QQ, RR] = lu(A);
+    for t = 1:Nt
+        u = QQ * ( UU\( LL\( PP*( RR\u ) ) ) );
+    end
+    times(2, j) = toc;   
+    errors(2, j) = norm(u - uTrue, inf);
+    fprintf('        ...backward Euler is done after      %4.2f second.\n', times(2, j))
+    
+    % ode45           
+    u = u0;
+    %opts = odeset('RelTol', 1e-12, 'AbsTol', 1e-12, 'Stats', 'on');
+    tic, u_ode45 = ode45(@(u, M) M*u, tspan, u0); t45 = toc;
+    times(3, j) = toc;   
+    errors(3, j) = norm(u(end, :) - uTrue, inf);
+    fprintf('        ...ode45 is done after               %4.2f second.\n', times(3, j))
+    
+    % ode15s
+    u = u0;
+    tic,  u_ode15s = ode15s(@(u, M) M*u, tspan, u0); 
+    times(4, j) = toc;   
+    errors(4, j) = norm(u(end, :) - uTrue, inf);
+    fprintf('        ...ode15s is done after              %4.2f second.\n', times(4, j))
+    
+    % ode23s            
+    u = u0;
+    tic
+    opts = odeset('Jacobian', M);
+    u_ode23s = ode23s(@(u, M) M*u, tspan, u0, opts); 
+    times(5, j) = toc;   
+    errors(5, j) = norm(u(end, :) - uTrue, inf);
+    fprintf('        ...ode23s is done after              %4.2f second.\n', times(5, j))
+    
+    % matrix exponential  
+    u = u0;
+    tic, u_exp = expv(Tfinal, M, u); texp = toc;
+    times(6, j) = toc;   
+    errors(6, j) = norm(u - uTrue, inf);
+    fprintf('        ...matrix exponential is done after  %4.2f second.\n', times(6, j))
+    
 end
+TotalTime = sum(times(:));
+fprintf('Total time is %6.4f seconds. \n', TotalTime );
 %% Convergence Analysis
-r1e = polyfit(log(Ns), log(errors(1, :)), 1);
-r2t = polyfit(log(Ns), log(times(1, :)), 1);
+Erates = zeros(1, 6);
+Trates = zeros(1, 6);
+for j = 1:6
+    
+    pE = polyfit( log(Ns), log( errors(j, :) ), 1);
+    pT = polyfit( log(Ns), log( times(j, :) ), 1);
+    Erates(j) = -pE(1);
+    Trates(j) = pT(1);
+    
+end
+%% Plots
+
+figure(1)
+loglog(Ns, errors, '.', 'markersize', 15)
+title('Errors')
+legend('Forward Eu' )
+
+
+
+
+
+
+
+
+
+
+
+
+
+%% Legacy
+
+%r1e = polyfit(log(Ns), log(errors(1, :)), 1);
+%r2t = polyfit(log(Ns), log(times(1, :)), 1);
 
 
 

@@ -11,13 +11,13 @@ uTrueMult = exp(-42*nu*Tfinal);
 %% Iteration Parameter                   
 %intOrd = 1:5;                     % Interpolation orders
 opOrd = 2;                        % Order of the spatial operator
-grids = 2.^(5:6);                 % Grid sizes in one dimension
+grids = 2.^(6:7);                 % Grid sizes in one dimension
 dts = 3*R^2./(2*grids.^2);        % Time step sizes
 numIter = length(grids);          % Total number of trials  
 errors = zeros(numIter, 5, 2);    % Preallocating for erros    
 %% Iterations
 warning('off','all')
-for intOrd = 1:5
+for intOrd = 4
     disp(['Iterating with interpolation order ', num2str(intOrd, 1)])
     bw = rm_bandwidth(3, intOrd);     % Bandwidth
         for j = 1:numIter

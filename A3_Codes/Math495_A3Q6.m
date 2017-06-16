@@ -2,9 +2,9 @@
 %
 %
 %% Computational Parameters                
-Nspace = 40;      % Number of grid points in one direction
+Nspace = 50;      % Number of grid points in one direction
 Ntime = 1e4;      % Number of time steps
-plotgap = 1e2;    % Number of time steps between plot 
+plotgap = 5e2;    % Number of time steps between plot 
 Nplot = 128;      % Plot resolution
 intOrd = 3;       % Interpolation order
 opOrd = 2;        % Order of the spatial operator
@@ -23,7 +23,8 @@ gam0 = 6/(dx^2);                  % Penalty parameter
 band = find(abs(d - R)<=bw*dx);                    % Constructing narrow band 
 [Xc, Yc, Zc] = sph2cart(TH(band), PHI(band), R);   % Finding closest points 
 [xpl, ypl, zpl] = paramSphere(Nplot, R);           % Plotting grid
-%% Operators                               
+%% Operators 
+gam0 = 0;
 Ext     = interp3_matrix(x, x, x, Xc, Yc, Zc, intOrd, band);     % Extension operator
 Lap     = nu*laplacian_3d_matrix(x, x, x, opOrd, band);
 IntPlot = interp3_matrix(x, x, x, xpl(:), ypl(:), zpl(:), intOrd, band);
