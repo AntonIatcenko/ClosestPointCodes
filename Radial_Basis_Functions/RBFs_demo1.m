@@ -1,7 +1,7 @@
 %% Radial Basis Functions Method from Scratch
 %
 %% Grid
-N = 50;   Ne = 50;         % Sizes of sampling and plotting grid
+N = 50;   Ne = 50;        % Sizes of sampling and plotting grid
 x = rand(N, 1);           % Sampling grid
 xe = linspace(0, 1, Ne);  % Plotting grid
 fun = @(x) sin(2*x);      % Underlying function

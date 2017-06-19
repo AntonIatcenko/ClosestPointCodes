@@ -1,8 +1,8 @@
 
 %%
 n = 32;              % Space resolution
-Tfinal = 1;          % Final time
-Ntime = 1e3;         % Number of time steps
+Tfinal = .2;         % Final time
+Ntime = 5e2;         % Number of time steps
 dt = Tfinal/Ntime;
 %%
 
@@ -11,7 +11,7 @@ data = zeros(n, Ntime+1);
 %%
 x = cos(linspace(0, pi, n))';     % Chebyshev grid
 
-u0 = (0.05./(1.05 - cos(x)));
+u0 = (0.05./(1.05 - cos(pi*x))) - 0.05/2.05;
 data(:, 1) = u0;
 
 % Compute the Dn
@@ -42,7 +42,9 @@ end
 time = 0:dt:Tfinal;
 figure(1)
 surf(x, time, data', 'edgecolor', 'none')
-colorbar
+colorbar, title('Heat equation with RBFs', 'fontsize', 16)
+xlabel('Space', 'fontsize', 14)
+ylabel('Time', 'fontsize', 14)
 
 
 %%

@@ -24,7 +24,7 @@ Ix = speye(Nx);  Iy = speye(Ny); I = kron(Ix, Iy);
 Dxx = (circshift(Ix, [1, 0]) - 2*Ix + circshift(Ix, [-1, 0]))/(dx^2);
 Dyy = (circshift(Iy, [1, 0]) - 2*Iy + circshift(Iy, [-1, 0]))/(dy^2);  
 Lap = nu*(kron(Ix, Dyy) + kron(Dxx, Iy));    %[Low, Up] = lu(I - dt*Lap);
-[Low, Up, PP, QQ, RR] = lu(I - dt*Lap);
+[LL, UU, PP, QQ, RR] = lu(I - dt*Lap);
 
 %% Annulus
 %f = @(r) (r*4-1).*(r>=1/4 & r<=1/2) + (r>1/2 & r<3/2) + ( 1-4*(r-3/2) ).*(r>=3/2 & r<2); 
@@ -40,10 +40,8 @@ h.ContourZLevel = lims(5);
 title('Time = 0', 'FontSize', 20);
 %% Time Integration            
 tic
-for t = 1:Ntime 
-    %u = u.*an;
-    %u = Up\(Low\u);             % Time step on the embedding grid 
-    u = RR\( PP\(Low*(Up*(QQ\u))));
+for t = 1:Ntime              
+    u = QQ*(UU\(LL\(PP*(RR\u))));    % Time step on the embedding grid 
     u = interp2(X, Y, reshape(u, Nx, Ny), cpx, cpy, 'cubic');   % Interpolation to the circle
     u = u(:);
     if mod(t, plotgap) == 0             % Plotting

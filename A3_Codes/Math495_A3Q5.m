@@ -2,7 +2,7 @@
 %
 %
 %% Computational Parameters                
-Ns = 2.^(5:6);                 % Number of grid points in one direction
+Ns = 40; %2.^(5:6);                 % Number of grid points in one direction
 intOrd = 3;                    % Interpolation order
 opOrd = 2;                     % Order of the spatial operator
 numIter = length(Ns);          % Total number of trials  
@@ -10,7 +10,7 @@ errors = zeros(6, numIter);    % Preallocating for errors
 times = errors;                % Preallocating for execution times
 %% Physical Parameters                     
 R = 1;            % Radius
-Tfinal = .1;      % Length of the simulation
+Tfinal = 1;       % Length of the simulation
 nu = .1;          % Diffusivity
 bw = rm_bandwidth(3, intOrd);     % Bandwidth
 football = spherefun.sphharm(6,0) + sqrt(14/11)*spherefun.sphharm(6,5); 
@@ -91,24 +91,24 @@ for j = 1:numIter
 end
 TotalTime = sum(times(:));
 fprintf('Total time is %6.4f seconds. \n', TotalTime );
-%% Convergence Analysis
-Erates = zeros(1, 6);
-Trates = zeros(1, 6);
-for j = 1:6
-    
-    pE = polyfit( log(Ns), log( errors(j, :) ), 1);
-    pT = polyfit( log(Ns), log( times(j, :) ), 1);
-    Erates(j) = -pE(1);
-    Trates(j) = pT(1);
-    
-end
-%% Plots
-
-figure(1)
-loglog(Ns, errors, '.', 'markersize', 15)
-title('Errors', 'fontsize', 16)
-legend({'Forward Euler', 'Backward Euler', 'ode45', 'ode15s',...
-    'ode23s', 'expm'}, 'fontsize', 14)
+% %% Convergence Analysis
+% Erates = zeros(1, 6);
+% Trates = zeros(1, 6);
+% for j = 1:6
+%     
+%     pE = polyfit( log(Ns), log( errors(j, :) ), 1);
+%     pT = polyfit( log(Ns), log( times(j, :) ), 1);
+%     Erates(j) = -pE(1);
+%     Trates(j) = pT(1);
+%     
+% end
+% %% Plots
+% 
+% figure(1)
+% loglog(Ns, errors, '.', 'markersize', 15)
+% title('Errors', 'fontsize', 16)
+% legend({'Forward Euler', 'Backward Euler', 'ode45', 'ode15s',...
+%     'ode23s', 'expm'}, 'fontsize', 14)
 
 
 
