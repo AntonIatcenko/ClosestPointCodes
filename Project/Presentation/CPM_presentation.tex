@@ -1,0 +1,223 @@
+\documentclass{beamer}
+ 
+\usepackage[utf8]{inputenc}
+\usetheme{Copenhagen}
+\usecolortheme[snowy]{owl}
+\setbeamersize{text margin left=10pt,text margin right=10pt} 
+ 
+\usepackage{biblatex}
+\usepackage{tikz}
+\usepackage{enumerate}
+\usepackage{scrextend}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{relsize}
+\usepackage{dsfont}
+\usepackage{graphicx}
+\usepackage{multimedia}
+
+\setbeamercolor*{block title}{
+    use=normal text,
+    fg=normal text.fg,
+    bg=normal text.bg!80!normal text.fg
+} 
+
+\setbeamercolor*{block body}{
+bg=normal text.bg!90!normal text.fg
+}
+ 
+ 
+ 
+\title{Swift-Hohenberg on a Torus}
+\author{Anton Iatcenko}
+%\institute{Presentation for Math 381W}
+\date{Summer 2017}
+ 
+ 
+ 
+\begin{document} 
+ 
+ 
+ 
+\frame{\titlepage}
+
+
+ 
+ 
+\begin{frame}
+\frametitle{Plan} 
+
+\begin{itemize}
+
+\item Overview of the Closest Point Method.
+
+\item Biharmonic heat equation on a sphere and a torus. 
+
+\item Swift-Hohenberg equation.
+
+\end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Closest Point Method} 
+
+Idea: instead of discretizing surface derivatives using parametrization, we represent them by Cartesian derivatives acting
+on the extension of a surface quantity to the embedding space. To achieve this, data needs to be constant in normal direction. 
+
+
+\begin{block}{Gradient Principle}
+For points $x$ on a smooth surface $S$, $\nabla_S u(x) = \nabla(u(cp(x)))$ because the function u(cp(x)) is constant in the
+normal direction and therefore only varies along the surface. In other words, at points x on the surface, intrinsic surface
+gradients $\nabla_S u(x)$ are the same as gradients of u(cp(x)).
+\end{block}
+
+Approximation of surface operators via Cartesian grid operators acting on normally extended data...
+
+\end{frame}
+
+ 
+
+ 
+\begin{frame}
+\frametitle{Closest Point Extension} 
+ 
+To obtain the normal extension, we recall that the vector connecting a point in the embedding space to its closest point on 
+a surface is in fact normal to it.
+
+ 
+ 
+ 
+\end{frame} 
+
+
+\begin{frame}
+\frametitle{Stabilized Diffusion Operator} 
+
+
+spectra of standard and stabilized operators. 
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Stabilized Diffusion Operator} 
+
+spy plots on sphere.
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Stability Restrictions }
+ 
+stability restrictions 
+ 
+\end{frame} 
+ 
+ 
+\begin{frame}
+\frametitle{Convergence on the Sphere}
+ 
+\end{frame}  
+
+
+\begin{frame}
+\frametitle{Swift-Hohenberg Equation}
+ 
+
+\begin{gather*}
+u_t = -\triangle^2 u - \triangle + u (P-1)u + su^2 - u^3
+\end{gather*} 
+ 
+This equation was derived by Swift and Hohenberg in 1977 to study thermal fluctuations on a fluid near the Rayleigh-Benard
+convective instability. The function $u$ is the temperature field in a plane horizontal layer of fluid heated from below. 
+The parameter $r$ measures how far the temperature is above the minimum temperature required for convection: for $r<0$,
+the heating is too small to cause convection, while for $r>0$, convection occurs. The Swift-Hohenberg equation is an example of 
+a PDE that exhibits pattern formation, including stripes, spots and spirals.
+ 
+\end{frame}
+ 
+ 
+ 
+\begin{frame}
+\frametitle{Discretization}
+ 
+\begin{gather*}
+u_t = \underbrace{-\triangle^2 u - \triangle + u (P-1)u}_{=:Lu} + \underbrace{su^2 - u^3}_{=:Nu}
+\end{gather*} 
+ 
+ 
+Linear part is very stiff, but can be inverted (-ish) - treat implicitly.
+Nonlinear part - difficult to invert, treat explicitly.  
+ 
+\end{frame} 
+ 
+ 
+\begin{frame} 
+ 
+\begin{center}
+\Huge{Thank you for your attention!}
+\end{center} 
+ 
+\end{frame} 
+ 
+ 
+ 
+\begin{frame}
+\frametitle{Videos} 
+ 
+ 
+\end{frame}  
+ 
+ 
+ 
+ 
+ 
+%\begin{frame}
+%\frametitle{References}
+% 
+% 
+%\begin{thebibliography}{9}
+%\bibitem{implcpm} 
+%The Implicit Closest Point Method for the Numerical Solution of Partial Differential Equations on Surfaces.
+%\textit{SIAM J. SCI. COMPUT. 2009 Society for Industrial and Applied Mathematics Vol. 31, No. 6, pp. 4330-4350}
+% 
+%\bibitem{implcpm} 
+%The Implicit Closest Point Method for the Numerical Solution of Partial Differential Equations on Surfaces.
+%\textit{SIAM J. SCI. COMPUT. 2009 Society for Industrial and Applied Mathematics Vol. 31, No. 6, pp. 4330-4350} 
+% 
+%
+%\end{thebibliography} 
+%  
+%\end{frame} 
+ 
+ 
+ 
+ 
+ 
+ 
+\end{document} 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+  
+ 
+ 
+ 
