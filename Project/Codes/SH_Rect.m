@@ -19,8 +19,8 @@ f = @(x) s*x.^2 - x.^3;          % Nonlinear part
 Lx = 2*pi*R;  Ly = 2*pi*r;   % Sides of the rectangle
 L = R+r+3;                   % Half of the side length of the cube
 dx = 2*L/N;                  % Spatial resolution
-x = dx:dx:Lx;             % 1d grid in x direction
-y = dx:dx:Ly;             % 1d grid in y direction
+x = dx:dx:Lx;                % 1d grid in x direction
+y = dx:dx:Ly;                % 1d grid in y direction
 [X, Y] = meshgrid(x, y);     % Embedding grid
 dt = Tfinal/Nt;              % Time step size
 %% Spatial Operators                      

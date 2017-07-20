@@ -31,7 +31,6 @@ bg=normal text.bg!90!normal text.fg
  
 \title{Swift-Hohenberg on a Torus}
 \author{Anton Iatcenko}
-%\institute{Presentation for Math 381W}
 \date{Summer 2017}
  
  
@@ -52,7 +51,7 @@ bg=normal text.bg!90!normal text.fg
 
 \item Overview of the Closest Point Method.
 
-\item Biharmonic heat equation on a sphere and a torus. 
+\item Heat equation using closest point method. 
 
 \item Swift-Hohenberg equation.
 
@@ -65,40 +64,139 @@ bg=normal text.bg!90!normal text.fg
 \begin{frame}
 \frametitle{Closest Point Method} 
 
-Idea: instead of discretizing surface derivatives using parametrization, we represent them by Cartesian derivatives acting
-on the extension of a surface quantity to the embedding space. To achieve this, data needs to be constant in normal direction. 
+Idea: instead of discretizing surface derivatives directly, we extend the data to the embedding space so that it is constant
+along the normal direction, and apply normal Cartesian derivatives to it.  \\
 
+A simple way to obtain such extension is using the closest point: the vector connecting a point in the embedding space to its
+closest point on a surface is in fact normal to it.
 
+\end{frame}
+
+ 
+
+ 
+\begin{frame}
+\frametitle{Derivative Principles} 
+ 
 \begin{block}{Gradient Principle}
-For points $x$ on a smooth surface $S$, $\nabla_S u(x) = \nabla(u(cp(x)))$ because the function u(cp(x)) is constant in the
-normal direction and therefore only varies along the surface. In other words, at points x on the surface, intrinsic surface
-gradients $\nabla_S u(x)$ are the same as gradients of u(cp(x)).
+For points $\vec{x}$ on a smooth surface $S$, 
+\begin{gather*}
+\nabla_S u(x) = \nabla(u(cp(x)))
+\end{gather*}
+because the function u(cp(x)) is constant in the normal direction and therefore only varies along the surface. 
 \end{block}
 
-Approximation of surface operators via Cartesian grid operators acting on normally extended data...
 
-\end{frame}
-
+\begin{block}{Divergence Principle}
+Let $\vec v$ be any vector field on $\mathds{R}^d$ that is tangent at $S$ and also tangent at all surfaces displaced by a 
+fixed distance from $S$, then for points $\vec x$ on the surface $S$, \vspace{-5mm}
+\begin{gather*}
+\nabla_S \cdot \vec v(x) = \nabla_S \cdot \vec v(x)
+\end{gather*}
+because the function u(cp(x)) is constant in the normal direction and therefore only varies along the surface. 
+\end{block}
  
-
  
+\end{frame} 
+
+
+
+%\begin{frame}
+%\frametitle{Closest Point Functions} 
+%
+%\begin{figure}%{0.5\textwidth}
+%\centering
+%\includegraphics[scale = 0.35, trim = {2cm 7cm 2cm 6.5cm}, clip]{../Pictures_Movies/cpCircle.pdf}
+%\includegraphics[scale = 0.35, trim = {2cm 7cm 2cm 6.5cm}, clip]{../Pictures_Movies/cpTorus.pdf}
+%\end{figure}
+%
+%
+%\end{frame} 
+
+
+
 \begin{frame}
 \frametitle{Closest Point Extension} 
- 
-To obtain the normal extension, we recall that the vector connecting a point in the embedding space to its closest point on 
-a surface is in fact normal to it.
 
- 
- 
- 
-\end{frame} 
+We define the closest point extension operator $E$ as follows:
+\begin{gather*}
+Eu(\mathbf x) = u(cp(\mathbf x)) 
+\end{gather*}
+for all $\mathbf x$ in the embedding space. Note that it is linear and idempotent.
+
+\begin{figure}%{0.5\textwidth}
+\centering
+\includegraphics[scale = 0.35, trim = {2cm 7cm 2cm 6.5cm}, clip]{../Pictures_Movies/cpCircle.pdf}
+\includegraphics[scale = 0.35, trim = {2cm 7cm 2cm 6.5cm}, clip]{../Pictures_Movies/cpTorus.pdf}
+\end{figure}
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Spatial Discretization Using Closest Point Method}
+
+The (linear) spatial differential operator $L_S$, written in terms of surface derivatives, is discretized using 
+the approximation of the two operators:
+\begin{itemize}
+\item Extension operator: approximated by an interpolation matrix $E_h$.
+\item Differential operator defined on the embedding space: approximated by a finite difference matrix $L_h$.
+\end{itemize}
+The original operator $L_S$ is approximated by the composition:
+\begin{gather*}
+L_S \approx L_h \circ E_h.
+\end{gather*}
+
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Time Stepping Using Closest Point Method}
+
+For a PDE $u_t = L_S u$, a typical time step using the CPM goes as follows:
+\begin{enumerate}
+
+\item Extend the data given on the surface to the embedding (computational) domain using closest point function.
+
+\item Step forward in time on the embedding space.
+
+\item Interpolate back to the surface.
+
+\end{enumerate}
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Diffusion on a Sphere}
+
+\begin{figure}%{0.5\textwidth}
+\centering
+\includegraphics[scale = 0.35, trim = {2cm 7cm 2cm 6.5cm}, clip]{../Pictures_Movies/HeatSphereConv.pdf}
+\includegraphics[scale = 0.25, trim = {6cm 7cm 6cm 6.5cm}, clip]{../Pictures_Movies/HeatSphere.png}
+\end{figure}
+
+\end{frame}
 
 
 \begin{frame}
 \frametitle{Stabilized Diffusion Operator} 
 
+The standard five-point Laplacian in combination with closest point extension:
+\begin{align*}
+\triangle u \approx \frac{1}{\Delta x^2} \big( &-4u(cp(x, y)) + u(cp(x+\Delta x, y)) + 
+u(cp(x-\Delta x, y)) \\ &+ u(cp(x, y+\Delta y)) + u(cp(x, y-\Delta y)) \big)
+\end{align*}
 
-spectra of standard and stabilized operators. 
+Stabilized version:
+\begin{align*}
+\triangle u \approx \frac{1}{\Delta x^2} \big( &-4u(x, y) + u(cp(x+\Delta x, y)) + 
+u(cp(x-\Delta x, y)) \\ &+ u(cp(x, y+\Delta y)) + u(cp(x, y-\Delta y)) \big)
+\end{align*} 
+
 
 
 \end{frame}
@@ -107,38 +205,55 @@ spectra of standard and stabilized operators.
 \begin{frame}
 \frametitle{Stabilized Diffusion Operator} 
 
-spy plots on sphere.
+\begin{figure}%{0.5\textwidth}
+\centering
+\includegraphics[scale = 0.35, trim = {2cm 7cm 2cm 6.5cm}, clip]{../Pictures_Movies/SpyBiharm.pdf}
+\includegraphics[scale = 0.35, trim = {2cm 7cm 2cm 6.5cm}, clip]{../Pictures_Movies/SpyStBiharm.pdf}
+\caption{Sparsity patterns}
+\end{figure}
 
 \end{frame}
 
 
 
 \begin{frame}
-\frametitle{Stability Restrictions }
+\frametitle{Stability Restrictions}
  
-stability restrictions 
+\begin{figure}%{0.5\textwidth}
+\centering
+\includegraphics[scale = 0.35, trim = {2cm 7cm 2cm 6.5cm}, clip]{../Pictures_Movies/Spectra_Biharm_Torus_40.pdf}
+\includegraphics[scale = 0.35, trim = {2cm 7cm 2cm 6.5cm}, clip]{../Pictures_Movies/Spectra_Biharm_Torus_40_streg.pdf}
+%\caption{\displaymath{ \Delta t = \frac{\Delta x^4}{36} }}
+\end{figure}
+
+\vspace{-10mm}
+ 
+\begin{gather*}
+\Delta t = \frac{\Delta x^4}{36}
+\end{gather*}
  
 \end{frame} 
  
  
-\begin{frame}
-\frametitle{Convergence on the Sphere}
- 
-\end{frame}  
+%\begin{frame}
+%\frametitle{Convergence on the Sphere}
+% 
+%\end{frame}  
 
 
 \begin{frame}
 \frametitle{Swift-Hohenberg Equation}
  
+Finally, the equation:
 
 \begin{gather*}
-u_t = -\triangle^2 u - \triangle + u (P-1)u + su^2 - u^3
+u_t = -\triangle^2 u - \triangle u + (P-1)u + su^2 - u^3
 \end{gather*} 
  
 This equation was derived by Swift and Hohenberg in 1977 to study thermal fluctuations on a fluid near the Rayleigh-Benard
 convective instability. The function $u$ is the temperature field in a plane horizontal layer of fluid heated from below. 
-The parameter $r$ measures how far the temperature is above the minimum temperature required for convection: for $r<0$,
-the heating is too small to cause convection, while for $r>0$, convection occurs. The Swift-Hohenberg equation is an example of 
+The parameter $P$ measures how far the temperature is above the minimum temperature required for convection: for $P<0$,
+the heating is too small to cause convection, while for $P>0$, convection occurs. The Swift-Hohenberg equation is an example of 
 a PDE that exhibits pattern formation, including stripes, spots and spirals.
  
 \end{frame}
@@ -148,15 +263,50 @@ a PDE that exhibits pattern formation, including stripes, spots and spirals.
 \begin{frame}
 \frametitle{Discretization}
  
+The equation can be written as a sum of linear and non-linear terms: 
+ 
 \begin{gather*}
-u_t = \underbrace{-\triangle^2 u - \triangle + u (P-1)u}_{=:Lu} + \underbrace{su^2 - u^3}_{=:Nu}
+u_t = \underbrace{-\triangle^2 u - \triangle u + (P-1)u}_{=:Lu} + \underbrace{su^2 - u^3}_{=:Nu}
 \end{gather*} 
  
- 
-Linear part is very stiff, but can be inverted (-ish) - treat implicitly.
-Nonlinear part - difficult to invert, treat explicitly.  
+\begin{itemize}
+\item Linear part is very stiff (large eigenvalues), but can be inverted - treat implicitly.
+\item Nonlinear part is very difficult to invert - treat explicitly.  
+\end{itemize} 
  
 \end{frame} 
+
+
+
+\begin{frame}
+\frametitle{Time Stepping}
+ 
+Possible implicit-explicit time stepping schemes: \vspace{5mm}
+ 
+\begin{itemize}
+\item IMEX Euler:
+\begin{gather*}
+\left( I - \Delta t L \right) u^{n+1} = u^n + \Delta t N u^n
+\end{gather*}
+\item Semi-implicit Backward Differentiation Formula (SBDF2)
+\begin{gather*}
+\left( 3I - 2\Delta t L \right) u^{n+1} = 4u^n + 4\Delta t Nu^n - u^{n-1} - 2\Delta t Nu^{n-1} 
+\end{gather*}   
+\item Many more ...
+\end{itemize} 
+ 
+\end{frame} 
+
+
+
+\begin{frame} 
+ 
+\begin{center}
+\Huge{Let's watch some videos.}
+\end{center} 
+ 
+\end{frame} 
+
  
  
 \begin{frame} 
@@ -169,11 +319,14 @@ Nonlinear part - difficult to invert, treat explicitly.
  
  
  
-\begin{frame}
-\frametitle{Videos} 
- 
- 
-\end{frame}  
+%\begin{frame}
+%\frametitle{Videos} 
+% 
+% 
+%\movie[width=11cm,height=8cm, poster]{}{../Pictures_Movies/SH_Torus100_2.avi}
+% 
+% 
+%\end{frame}  
  
  
  

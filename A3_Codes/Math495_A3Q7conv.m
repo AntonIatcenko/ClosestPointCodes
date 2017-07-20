@@ -13,7 +13,7 @@ numIter = 10;                     % Total number of trials
 grids = 30+4*(1:numIter);         % Grid sizes in one dimension
 dts = 3*R^2./(2*grids.^2);        % Time step sizes           
 errors = zeros(numIter, 5, 2);    % Preallocating for erros    
-%% Iterations
+%% Iterations                            
 warning('off','all')
 for opOrd = 1:2
     fprintf('Iterating with Laplacian of order %1.0f.\n', 2*opOrd)
@@ -63,8 +63,7 @@ end
 end
 warning('on','all')
 %
-
-%%
+%% Plots                                 
 
 errors1 = squeeze(errors(:,:,1));
 errors2 = squeeze(errors(:,:,2));
@@ -84,17 +83,3 @@ title('Errors with Laplacian of order 4', 'fontsize', 16)
 legend({'Interpolation order 1', 'Interpolation order 2',...
     'Interpolation order 3', 'Interpolation order 4',...
     'Interpolation order 5'}, 'fontsize', 14, 'location', 'southwest')
-
-
-
-
-
-
-
-
-
-
-
-
-
-

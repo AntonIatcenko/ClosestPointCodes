@@ -12,7 +12,7 @@ bw = rm_bandwidth(3, intOrd);    % Bandwidth
 %% Physical Parameters                    
 R = 6;             % Major radius
 r = 4;             % Minor radius
-Tfinal = 100;      % Length of the simulation
+Tfinal = 1;        % Length of the simulation
 P = .9;            % "Heat bath" coefficient
 s = 1;             % Coupling coefficient 
 f = @(x) s*x.^2 - x.^3;          % Nonlinear part

@@ -2,16 +2,16 @@
 %
 %
 %% Computational Parameters              
-Nspace = 20;      % Number of grid points in one direction
+Nspace = 40;      % Number of grid points in one direction
 Ntime = 1e3;      % Number of time steps
-plotgap = 1e1;    % Number of time steps between plot 
+plotgap = 5e1;    % Number of time steps between plot 
 Nplot = 128;      % Plot resolution
 intOrd = 3;       % Interpolation order
 opOrd = 2;        % Order of the spatial operator
 bw = rm_bandwidth(3, intOrd);     % Bandwidth
 %% Physical Parameters                   
 R = 1;            % Radius
-Tfinal = 1;       % Length of the simulation
+Tfinal = .01;       % Length of the simulation
 nu = 1;           % Diffusivity
 %% Grids                                 
 dt = Tfinal/Ntime;                % Temporal resolution
@@ -30,13 +30,16 @@ IntPlot = interp3_matrix(x, x, x, xpl(:), ypl(:), zpl(:), intOrd, band);
 football = spherefun.sphharm(6,0) + sqrt(14/11)*spherefun.sphharm(6,5);
 u0 = football(Xc, Yc, Zc);  
 uTrue = exp(-42*nu*Tfinal)*u0;     % Borrowed from http://bit.ly/2sdlXlM
+% ICfun = spherefun.sphharm(1,0);
+% u0 = ICfun(Xc, Yc, Zc);  
+% uTrue = exp(-nu*Tfinal)*u0;     
 %% Initial Plot                          
-u0plot = IntPlot*u0;
+u0plot = IntPlot*u0;   uTruePlot = IntPlot*uTrue;
 
 fig1 = figure(1);
 s = surf(xpl, ypl, zpl, reshape(u0plot, Nplot+1, Nplot+1),...
-    'edgecolor', 'none'); colorbar, axis off
-title('Time 0', 'fontsize', 16)
+    'edgecolor', 'none'); axis equal, axis off
+title('Time 0', 'fontsize', 16), colormap(fig1, autumn)
 u = u0;
 %
 %
@@ -66,5 +69,12 @@ for t = 1:Ntime
 end
 %toc
 
+fprintf('Error in supremum norm - %4.4f \n', norm(u(:) - uTrue(:), inf))
 
-fprintf('Error in supremum norm - %2.1e \n', norm(u(:) - uTrue(:), inf))
+
+name = sprintf('../Project/Pictures_Movies/HeatSphere.png');
+print(name, '-dpng', '-r0')
+
+
+
+

@@ -26,23 +26,42 @@ K = cos(theta)./(R + r*cos(theta'));
 
 %%
 figure(1)
+%surf(x3, y3, z3, K, 'edgecolor', 'none')
 surf(x3, y3, z3, K, 'edgecolor', 'none')
-colorbar, hold on
+hold on, axis tight, axis off, view([-60 60])
+title('Closest Points for a Torus', 'Fontsize', 20)
 
 %%
-a = 2; b = 7; c = 5;
+a1 = -2; b1 = -7; c1 = 5;
 
-[Pth, Pr, Pz] = cart2pol(a, b, c);
+[Pth, Pr, Pz] = cart2pol(a1, b1, c1);
 [Pth1, Pr1] = cart2pol(Pr-R, Pz);
 [Pr2, Pz2] = pol2cart(Pth1, r);
-[cpa, cpb, cpc] = pol2cart(Pth, Pr2+R, Pz2);
+[cpa1, cpb1, cpc1] = pol2cart(Pth, Pr2+R, Pz2);
+
+a2 = -5; b2 = 0; c2 = 3;
+
+[Pth, Pr, Pz] = cart2pol(a2, b2, c2);
+[Pth1, Pr1] = cart2pol(Pr-R, Pz);
+[Pr2, Pz2] = pol2cart(Pth1, r);
+[cpa2, cpb2, cpc2] = pol2cart(Pth, Pr2+R, Pz2);
+
+a3 = -7; b3 = 6; c3 = 6;
+
+[Pth, Pr, Pz] = cart2pol(a3, b3, c3);
+[Pth1, Pr1] = cart2pol(Pr-R, Pz);
+[Pr2, Pz2] = pol2cart(Pth1, r);
+[cpa3, cpb3, cpc3] = pol2cart(Pth, Pr2+R, Pz2);
 
 %%
-plot3(a, b, c, 'b.', 'markersize', 20)
-plot3(cpa, cpb, cpc, 'r.', 'markersize', 20)
+plot3([a1 cpa1], [b1 cpb1], [c1 cpc1],  'r-*', 'linewidth', 2), hold on
+plot3([a2 cpa2], [b2 cpb2], [c2 cpc2],  'r-*', 'linewidth', 2)
+plot3([a3 cpa3], [b3 cpb3], [c3 cpc3],  'r-*', 'linewidth', 2), hold off
+%plot3(cpa, cpb, cpc, 'r.', 'markersize', 20)
 
+name = sprintf('../Project/Pictures_Movies/cpTorus.pdf');
+print(name, '-dpdf', '-r0')
 
-hold off
 
 
 
